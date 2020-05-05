@@ -107,7 +107,6 @@ export let createDisplay = (prop: PonyDisplayProp): PonyDisplay => {
       if (prop.monster !== undefined) {
          renderCharacter(prop.monster, squareSize, 'monster')
       }
-      renderScore(prop.score, { x: 50, y: 540, scale: 1 })
    }
 
    let me: PonyDisplay = {
