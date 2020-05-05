@@ -5,10 +5,14 @@ export let generateLabyrinth = (size: Pair) => {
    let twiceSize = { x: size.x * 2, y: size.y * 2 }
 
    let grid = createArray2d<Square>(twiceSize, ({ y, x }) => {
-      let isBorder = () => (x + y) % 2 === 1
+      let isWall = () => (x + y) % 2 === 1
       let isGround = () => x % 2 === 1 && y % 2 === 1
+      let isMapBorder = () => {
+         return x <= 0 || y <= 0 || x >= twiceSize.x - 2 || y >= twiceSize.y - 2
+      }
 
       if (x >= size.x * 2 - 1 || y >= size.y * 2 - 1) {
+         // bottom and right side shall be left unused
          return {
             type: 'exterior',
          }
@@ -21,7 +25,7 @@ export let generateLabyrinth = (size: Pair) => {
       }
 
       let filled: WallSquare['filled'] = 'filled'
-      if (isBorder() && Math.random() > 0.4) {
+      if (isWall() && Math.random() > 0.35 && !isMapBorder()) {
          filled = 'empty'
       }
 

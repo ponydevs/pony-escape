@@ -28,6 +28,9 @@ export let core = (prop: LoadProp) => {
       y: Math.floor(size.y / 2) * 2 - 1,
    }
 
+   wallGrid[player.y][0].filled = 'empty'
+   wallGrid[player.y][size.x * 2 - 2].filled = 'empty'
+
    let score = 0
 
    let move = (direction: Pair) => {
@@ -37,7 +40,11 @@ export let core = (prop: LoadProp) => {
          player.x += direction.x
          player.y += direction.y
 
-         if (wallGrid[player.y]?.[player.x]?.filled === 'empty') {
+         if (
+            player.x > 0 &&
+            player.y > 0 &&
+            wallGrid[player.y]?.[player.x]?.filled === 'empty'
+         ) {
             player.x += direction.x
             player.y += direction.y
             render()

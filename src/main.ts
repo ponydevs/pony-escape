@@ -11,7 +11,7 @@ export let main = async () => {
    let display = createDisplay({ asset, canvas })
    let input = createInput()
 
-   let param = getUrlParam(location, { size: 5 })
+   let param = getUrlParam(location, { size: 12 })
 
    core({
       display,
