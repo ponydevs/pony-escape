@@ -4,6 +4,7 @@ import {
    Square,
    Player,
    Pair,
+   WallSquare,
 } from '../type/ponyEscape'
 import { generateLabyrinth } from './labyrinth/generateLabyrinth'
 import { w } from '../util/window'
@@ -18,6 +19,7 @@ export let core = (prop: LoadProp) => {
    let { display, input, size } = prop
 
    let grid = generateLabyrinth(size)
+   let wallGrid = grid as WallSquare[][]
 
    w.grid = grid
 
@@ -28,22 +30,28 @@ export let core = (prop: LoadProp) => {
 
    let score = 0
 
-   input.left.subscribe(() => {
-      player.x -= 2
-      render()
-   })
-   input.right.subscribe(() => {
-      player.x += 2
-      render()
-   })
-   input.up.subscribe(() => {
-      player.y -= 2
-      render()
-   })
-   input.down.subscribe(() => {
-      player.y += 2
-      render()
-   })
+   let move = (direction: Pair) => {
+      if (Math.abs(direction.x) + Math.abs(direction.y) !== 1) throw new Error()
+
+      return () => {
+         player.x += direction.x
+         player.y += direction.y
+
+         if (wallGrid[player.y]?.[player.x]?.filled === 'empty') {
+            player.x += direction.x
+            player.y += direction.y
+            render()
+         } else {
+            player.x -= direction.x
+            player.y -= direction.y
+         }
+      }
+   }
+
+   input.left.subscribe(move({ x: -1, y: 0 }))
+   input.right.subscribe(move({ x: 1, y: 0 }))
+   input.up.subscribe(move({ x: 0, y: -1 }))
+   input.down.subscribe(move({ x: 0, y: 1 }))
 
    let render = () => {
       display.render({
