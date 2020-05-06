@@ -3,6 +3,7 @@ export interface PonyEscapeConfig {
    cycleRejectionFrequency: number
    easy: boolean
    hard: boolean
+   hide: boolean
    maxCycleSize: number
    seed: string
    size: number

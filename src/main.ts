@@ -20,9 +20,10 @@ export let main = async () => {
       smooze: () => false,
       easy: () => false,
       hard: () => false,
-      size: ({ easy, hard, smooze }) => {
+      hide: ({ smooze }) => smooze(),
+      size: ({ easy, hard, hide }) => {
          let difficulty = easy() ? 0 : hard() ? 2 : 1
-         return (smooze() ? [7, 8, 10] : [12, 15, 21])[difficulty]
+         return (hide() ? [7, 8, 10] : [12, 15, 21])[difficulty]
       },
       cycle: () => -1,
       maxCycleSize: ({ cycle, size }) => {

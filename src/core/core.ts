@@ -19,22 +19,33 @@ export interface LoadProp {
 }
 
 export let core = (prop: LoadProp) => {
-   let { display, input, size } = prop
+   let { config, display, input, size } = prop
 
-   let grid = generateLabyrinth(prop)
+   let { grid, oddWallList, evenWallList } = generateLabyrinth(prop)
    let wallGrid = grid as WallSquare[][]
 
    w.grid = grid
 
    let player: Player = {
       x: 1,
-      y: Math.floor(size.y / 2) * 2 - 1,
+      y: Math.floor(size.y / 4) * 2 + 1,
    }
 
    wallGrid[player.y][0].filled = 'empty'
-   wallGrid[player.y][size.x * 2 - 2].filled = 'empty'
+   wallGrid[size.y * 2 - player.y][size.x * 2 - 2].filled = 'empty'
 
    let score = 0
+   let moveCount = 0
+
+   let hideAllWalls = () => {
+      if (!config.hide) return
+      oddWallList.forEach(({ wall }) => {
+         wall.visibility = 'invisible'
+      })
+      evenWallList.forEach(({ wall }) => {
+         wall.visibility = 'invisible'
+      })
+   }
 
    let move = (direction: Pair) => {
       if (Math.abs(direction.x) + Math.abs(direction.y) !== 1) throw new Error()
@@ -48,12 +59,19 @@ export let core = (prop: LoadProp) => {
             player.y > 0 &&
             wallGrid[player.y]?.[player.x]?.filled === 'empty'
          ) {
+            wallGrid[player.y][player.x].visibility = 'visible'
             player.x += direction.x
             player.y += direction.y
             render()
+            moveCount += 1
          } else {
             player.x -= direction.x
             player.y -= direction.y
+         }
+
+         if (moveCount === 4) {
+            hideAllWalls()
+            render()
          }
       }
    }

@@ -1,7 +1,7 @@
 import { PonyDisplay, PonyRenderProp, Pair, WHPair } from '../type/ponyEscape'
 import { Asset } from './asset'
 import { getContext2d } from '../util/getContext2d'
-import { white, darkCoal, black, coal } from './color'
+import { white, darkCoal, black, coal, albescent } from './color'
 import { scaleToFitIn } from '../util/scaleToFitIn'
 
 export interface PonyDisplayProp {
@@ -49,7 +49,7 @@ export let createDisplay = (prop: PonyDisplayProp): PonyDisplay => {
             } else if (square.type === 'ground') {
                color = coal
             } else if (square.visibility === 'invisible') {
-               color = darkCoal
+               color = albescent
             } else if (square.filled === 'filled') {
                color = white
             } else {
