@@ -9,6 +9,7 @@ import {
 } from '../type/ponyEscape'
 import { w } from '../util/window'
 import { generateLabyrinth } from './labyrinth/generateLabyrinth'
+import { pairEqual } from '../util/pairEqual'
 
 export interface LoadProp {
    config: PonyEscapeConfig
@@ -23,6 +24,7 @@ export let core = (prop: LoadProp) => {
 
    let { grid, oddWallList, evenWallList } = generateLabyrinth(prop)
    let wallGrid = grid as WallSquare[][]
+   let screen: 'play' | 'score' = 'play'
 
    w.grid = grid
 
@@ -31,10 +33,14 @@ export let core = (prop: LoadProp) => {
       y: Math.ceil(size.y / 4) * 2 - 1,
    }
 
-   wallGrid[player.y][0].filled = 'empty'
-   wallGrid[2 * size.y - 2 - player.y][size.x * 2 - 2].filled = 'empty'
+   let destination: Pair = {
+      x: size.x * 2 - 1,
+      y: 2 * size.y - 2 - player.y,
+   }
 
-   let score = 0
+   wallGrid[player.y][0].filled = 'empty'
+   wallGrid[destination.y][destination.x - 1].filled = 'empty'
+
    let moveCount = 0
 
    let hideAllWalls = () => {
@@ -53,6 +59,11 @@ export let core = (prop: LoadProp) => {
       return () => {
          let moveCounteIncrement = false
          let needsRender = false
+         let destinationReached = false
+
+         if (pairEqual(player, destination) && direction.x === 1) {
+            destinationReached = true
+         }
 
          player.x += direction.x
          player.y += direction.y
@@ -67,6 +78,9 @@ export let core = (prop: LoadProp) => {
             player.y += direction.y
             needsRender = true
             moveCounteIncrement = true
+         } else if (destinationReached) {
+            needsRender = true
+            screen = 'score'
          } else {
             player.x -= direction.x
             player.y -= direction.y
@@ -94,8 +108,8 @@ export let core = (prop: LoadProp) => {
          grid,
          monster: undefined,
          player,
-         score,
-         screen: 'play',
+         score: -1,
+         screen,
       })
    }
 

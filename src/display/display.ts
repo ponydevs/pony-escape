@@ -89,16 +89,14 @@ export let createDisplay = (prop: PonyDisplayProp): PonyDisplay => {
       ctx.strokeStyle = 'black'
 
       let text = `${score}`
+      if (score === -1) {
+         text = 'Victory!'
+      }
       ctx.fillText(text, x, y)
       ctx.strokeText(text, x, y)
    }
 
    let render = async (prop: PonyRenderProp): Promise<undefined> => {
-      if (prop.screen === 'score') {
-         renderScore(prop.score, { x: 350, y: 250, scale: 2 })
-         return
-      }
-
       let gridSize = getGridSize(prop.grid)
       let squareSize = getSquareSize(gridSize)
 
@@ -106,6 +104,10 @@ export let createDisplay = (prop: PonyDisplayProp): PonyDisplay => {
       renderCharacter(prop.player, squareSize, 'player')
       if (prop.monster !== undefined) {
          renderCharacter(prop.monster, squareSize, 'monster')
+      }
+
+      if (prop.screen === 'score') {
+         renderScore(prop.score, { x: 290, y: 300, scale: 2 })
       }
    }
 
