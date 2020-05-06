@@ -5,7 +5,7 @@ import { getAsset } from './display/asset'
 import { createDisplay } from './display/display'
 import { createInput } from './input/input'
 import { init } from './page/init'
-import { PonyEscapeConfig } from './ponyEscapeConfig'
+import { PonyEscapeConfig } from './type/ponyEscapeConfig'
 import { randomSeed } from './util/randomSeed'
 import { getUrlParam } from './util/urlParam'
 
@@ -22,7 +22,7 @@ export let main = async () => {
       hard: () => false,
       hide: ({ smooze }) => smooze(),
       hideDelay: ({ hide }) => (hide() ? 4 : -1),
-      smoozeDelay: ({ smooze }) => (smooze() ? 4 : -1),
+      smoozeDelay: ({ smooze }) => (smooze() ? 5 : -1),
       size: ({ easy, hard, hideDelay }) => {
          let difficulty = easy() ? 0 : hard() ? 2 : 1
          return (hideDelay() >= 0 ? [7, 8, 10] : [12, 15, 21])[difficulty]

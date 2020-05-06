@@ -17,3 +17,13 @@ export let pairScale = (a: Pair, r: number) => {
       y: a.y * r,
    }
 }
+
+export let pairToString = ({ x, y }: Pair) => `${x},${y}`
+
+export let pairFromString = (text: string) => {
+   let [xx, yy] = text.split(',')
+   return {
+      x: +xx,
+      y: +yy,
+   }
+}

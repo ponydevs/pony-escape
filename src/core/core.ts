@@ -1,15 +1,17 @@
 import { prng } from '../lib/seedrandom'
-import { PonyEscapeConfig } from '../ponyEscapeConfig'
+import { PonyEscapeConfig } from '../type/ponyEscapeConfig'
 import {
    Pair,
    Player,
    PonyDisplay,
    PonyInput,
    WallSquare,
+   Monster,
+   PonyRenderProp,
 } from '../type/ponyEscape'
 import { w } from '../util/window'
 import { generateLabyrinth } from './labyrinth/generateLabyrinth'
-import { pairEqual } from '../util/pair'
+import { pairEqual, pairToString, pairFromString } from '../util/pair'
 
 export interface LoadProp {
    config: PonyEscapeConfig
@@ -29,7 +31,8 @@ export let core = (prop: LoadProp) => {
       oddWallList,
       evenWallList,
    } = generateLabyrinth(prop)
-   let screen: 'play' | 'score' = 'play'
+   let score: PonyRenderProp['score'] = '<score screen>'
+   let screen: PonyRenderProp['screen'] = 'play'
 
    w.grid = grid
 
@@ -37,6 +40,8 @@ export let core = (prop: LoadProp) => {
       x: 1,
       y: Math.ceil(size.y / 4) * 2 - 1,
    }
+
+   let smooze: Monster = { ...player }
 
    let destination: Pair = {
       x: size.x * 2 - 1,
@@ -57,6 +62,19 @@ export let core = (prop: LoadProp) => {
       })
    }
 
+   let makeWallVisible = (pos: Pair) => {
+      let wallList: WallSquare[] = [wallGrid[pos.y][pos.x]]
+      if (pos.x % 2 === 1) {
+         wallList.push(wallGrid[pos.y][pos.x - 1], wallGrid[pos.y][pos.x + 1])
+      } else if (pos.y % 2 === 1) {
+         wallList.push(wallGrid[pos.y - 1][pos.x], wallGrid[pos.y + 1][pos.x])
+      } else throw new Error()
+
+      wallList.forEach((wall) => {
+         wall.visibility = 'visible'
+      })
+   }
+
    /**
     * move
     * Let the player do a move
@@ -65,7 +83,6 @@ export let core = (prop: LoadProp) => {
     */
    let move = (direction: Pair) => {
       let moveCounteIncrement = false
-      let needsRender = false
       let destinationReached = false
 
       if (pairEqual(player, destination) && direction.x === 1) {
@@ -83,12 +100,14 @@ export let core = (prop: LoadProp) => {
          wallGrid[player.y][player.x].visibility = 'visible'
          player.x += direction.x
          player.y += direction.y
-         needsRender = true
          moveCounteIncrement = true
       } else if (destinationReached) {
-         needsRender = true
+         score = 'victory'
          screen = 'score'
       } else {
+         if (wallGrid[player.y]?.[player.x]?.filled === 'filled') {
+            makeWallVisible(player)
+         }
          player.x -= direction.x
          player.y -= direction.y
       }
@@ -97,12 +116,27 @@ export let core = (prop: LoadProp) => {
 
       if (moveCount === config.hideDelay) {
          hideAllWalls()
-         needsRender = true
       }
-      if (moveCount > config.smoozeDelay) {
+      if (moveCount >= config.smoozeDelay) {
+         if (moveCount > config.smoozeDelay) {
+            moveSmooze()
+         }
+         if (pairEqual(smooze, player)) {
+            score = 'defeat'
+            screen = 'score'
+         }
       }
-      if (needsRender) {
-         render()
+      render()
+   }
+
+   let moveSmooze = () => {
+      let path: string[] = dijkstra.path(
+         pairToString(smooze),
+         pairToString(player),
+      )
+
+      smooze = {
+         ...pairFromString(path?.[1] ?? pairToString(smooze)),
       }
    }
 
@@ -126,9 +160,9 @@ export let core = (prop: LoadProp) => {
    let render = () => {
       display.render({
          grid,
-         monster: undefined,
+         monster: moveCount >= config.smoozeDelay ? smooze : undefined,
          player,
-         score: -1,
+         score,
          screen,
       })
    }

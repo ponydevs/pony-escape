@@ -4,7 +4,7 @@ import { createArray2d } from '../../util/array2d'
 import { LoadProp } from '../core'
 import { kruskal } from './kruskal'
 import { shuffle } from './shuffle'
-import { pairScale, pairAdd } from '../../util/pair'
+import { pairScale, pairAdd, pairToString } from '../../util/pair'
 
 export interface LocalizedWall {
    x: number
@@ -121,14 +121,13 @@ export let generateLabyrinth = (prop: LoadProp) => {
          })
          .map((direction) => pairAdd(pos, pairScale(direction, 2)))
    }
-   let getLabel = ({ x, y }: Pair) => `${x},${y}`
 
    groundList.forEach((localized) => {
-      let label = getLabel(localized)
+      let label = pairToString(localized)
       let siblingObj: Record<string, number> = {}
 
       getNeigboorPairList(localized).forEach((neighboor) => {
-         siblingObj[getLabel(neighboor)] = 1
+         siblingObj[pairToString(neighboor)] = 1
       })
 
       dijkstra.addNode(label, siblingObj)

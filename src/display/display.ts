@@ -81,7 +81,10 @@ export let createDisplay = (prop: PonyDisplayProp): PonyDisplay => {
       ctx.drawImage(image, dx + fit.x, dy + fit.y, fit.w, fit.h)
    }
 
-   let renderScore = (score: number, scorePos: ScorePosition) => {
+   let renderScore = (
+      score: PonyRenderProp['score'],
+      scorePos: ScorePosition,
+   ) => {
       let { x, y, scale } = scorePos
 
       ctx.font = `${32 * scale}px Impact`
@@ -89,8 +92,10 @@ export let createDisplay = (prop: PonyDisplayProp): PonyDisplay => {
       ctx.strokeStyle = 'black'
 
       let text = `${score}`
-      if (score === -1) {
+      if (score === 'victory') {
          text = 'You escaped!'
+      } else if (score === 'defeat') {
+         text = "You've been smoozed!"
       }
       ctx.fillText(text, x, y)
       ctx.strokeText(text, x, y)
@@ -107,7 +112,7 @@ export let createDisplay = (prop: PonyDisplayProp): PonyDisplay => {
       }
 
       if (prop.screen === 'score') {
-         renderScore(prop.score, { x: 290, y: 300, scale: 2 })
+         renderScore(prop.score, { x: 210, y: 300, scale: 2 })
       }
    }
 
