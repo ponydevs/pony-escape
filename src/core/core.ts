@@ -9,7 +9,7 @@ import {
 } from '../type/ponyEscape'
 import { w } from '../util/window'
 import { generateLabyrinth } from './labyrinth/generateLabyrinth'
-import { pairEqual } from '../util/pairEqual'
+import { pairEqual } from '../util/pair'
 
 export interface LoadProp {
    config: PonyEscapeConfig
@@ -22,8 +22,13 @@ export interface LoadProp {
 export let core = (prop: LoadProp) => {
    let { config, display, input, size } = prop
 
-   let { grid, oddWallList, evenWallList } = generateLabyrinth(prop)
-   let wallGrid = grid as WallSquare[][]
+   let {
+      grid,
+      wallGrid,
+      dijkstra,
+      oddWallList,
+      evenWallList,
+   } = generateLabyrinth(prop)
    let screen: 'play' | 'score' = 'play'
 
    w.grid = grid
@@ -44,7 +49,6 @@ export let core = (prop: LoadProp) => {
    let moveCount = 0
 
    let hideAllWalls = () => {
-      if (config.hide < 0) return
       oddWallList.forEach(({ wall }) => {
          wall.visibility = 'invisible'
       })
@@ -53,55 +57,71 @@ export let core = (prop: LoadProp) => {
       })
    }
 
+   /**
+    * move
+    * Let the player do a move
+    *
+    * @param direction The delta Pair that leads the player to an odd wall
+    */
    let move = (direction: Pair) => {
-      if (Math.abs(direction.x) + Math.abs(direction.y) !== 1) throw new Error()
+      let moveCounteIncrement = false
+      let needsRender = false
+      let destinationReached = false
 
-      return () => {
-         let moveCounteIncrement = false
-         let needsRender = false
-         let destinationReached = false
+      if (pairEqual(player, destination) && direction.x === 1) {
+         destinationReached = true
+      }
 
-         if (pairEqual(player, destination) && direction.x === 1) {
-            destinationReached = true
-         }
+      player.x += direction.x
+      player.y += direction.y
 
+      if (
+         player.x > 0 &&
+         player.y > 0 &&
+         wallGrid[player.y]?.[player.x]?.filled === 'empty'
+      ) {
+         wallGrid[player.y][player.x].visibility = 'visible'
          player.x += direction.x
          player.y += direction.y
+         needsRender = true
+         moveCounteIncrement = true
+      } else if (destinationReached) {
+         needsRender = true
+         screen = 'score'
+      } else {
+         player.x -= direction.x
+         player.y -= direction.y
+      }
 
-         if (
-            player.x > 0 &&
-            player.y > 0 &&
-            wallGrid[player.y]?.[player.x]?.filled === 'empty'
-         ) {
-            wallGrid[player.y][player.x].visibility = 'visible'
-            player.x += direction.x
-            player.y += direction.y
-            needsRender = true
-            moveCounteIncrement = true
-         } else if (destinationReached) {
-            needsRender = true
-            screen = 'score'
-         } else {
-            player.x -= direction.x
-            player.y -= direction.y
-         }
+      moveCount += +moveCounteIncrement
 
-         moveCount += +moveCounteIncrement
-
-         if (moveCount === config.hide) {
-            hideAllWalls()
-            needsRender = true
-         }
-         if (needsRender) {
-            render()
-         }
+      if (moveCount === config.hideDelay) {
+         hideAllWalls()
+         needsRender = true
+      }
+      if (moveCount > config.smoozeDelay) {
+      }
+      if (needsRender) {
+         render()
       }
    }
 
-   input.left.subscribe(move({ x: -1, y: 0 }))
-   input.right.subscribe(move({ x: 1, y: 0 }))
-   input.up.subscribe(move({ x: 0, y: -1 }))
-   input.down.subscribe(move({ x: 0, y: 1 }))
+   /**
+    * move_
+    *
+    * Prepare a move for the given delta
+    *
+    * @param direction The delta Pair; see `move()`
+    */
+   let move_ = (direction: Pair) => {
+      if (Math.abs(direction.x) + Math.abs(direction.y) !== 1) throw new Error()
+      return () => move(direction)
+   }
+
+   input.left.subscribe(move_({ x: -1, y: 0 }))
+   input.right.subscribe(move_({ x: 1, y: 0 }))
+   input.up.subscribe(move_({ x: 0, y: -1 }))
+   input.down.subscribe(move_({ x: 0, y: 1 }))
 
    let render = () => {
       display.render({

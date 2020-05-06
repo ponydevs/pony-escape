@@ -90,7 +90,7 @@ export let createDisplay = (prop: PonyDisplayProp): PonyDisplay => {
 
       let text = `${score}`
       if (score === -1) {
-         text = 'Victory!'
+         text = 'You escaped!'
       }
       ctx.fillText(text, x, y)
       ctx.strokeText(text, x, y)

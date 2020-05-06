@@ -20,10 +20,12 @@ export let main = async () => {
       smooze: () => false,
       easy: () => false,
       hard: () => false,
-      hide: ({ smooze }) => (smooze() ? 4 : -1),
-      size: ({ easy, hard, hide }) => {
+      hide: ({ smooze }) => smooze(),
+      hideDelay: ({ hide }) => (hide() ? 4 : -1),
+      smoozeDelay: ({ smooze }) => (smooze() ? 4 : -1),
+      size: ({ easy, hard, hideDelay }) => {
          let difficulty = easy() ? 0 : hard() ? 2 : 1
-         return (hide() >= 0 ? [7, 8, 10] : [12, 15, 21])[difficulty]
+         return (hideDelay() >= 0 ? [7, 8, 10] : [12, 15, 21])[difficulty]
       },
       cycle: () => -1,
       maxCycleSize: ({ cycle, size }) => {
@@ -36,8 +38,11 @@ export let main = async () => {
       cycleRejectionFrequency: () => 0,
    })
 
-   if ((config.hide as any) === true) {
-      config.hide = 4
+   if (config.hideDelay === -1) {
+      config.hideDelay = Infinity
+   }
+   if (config.smoozeDelay === -1) {
+      config.smoozeDelay = Infinity
    }
 
    console.info(`?seed=${config.seed}`)

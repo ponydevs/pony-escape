@@ -9,7 +9,7 @@ export interface KruskalProp<TNode, TLink> {
 export let kruskal = <TNode, TLink>(
    prop: KruskalProp<TNode, TLink>,
 ): TLink[] => {
-   let setMap = new Map()
+   let setMap = new Map<TNode, joinable.Set>()
    let { smallEnough = () => false } = prop
 
    let getSet = (node: TNode) => {

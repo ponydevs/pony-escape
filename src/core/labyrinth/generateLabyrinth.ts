@@ -1,13 +1,21 @@
+import { default as Dijkstra } from 'node-dijkstra'
+import { Square, WallSquare, GroundSquare, Pair } from '../../type/ponyEscape'
 import { createArray2d } from '../../util/array2d'
-import { Square, WallSquare } from '../../type/ponyEscape'
+import { LoadProp } from '../core'
 import { kruskal } from './kruskal'
 import { shuffle } from './shuffle'
-import { LoadProp } from '../core'
+import { pairScale, pairAdd } from '../../util/pair'
 
-export interface LocalizedWall<TData> {
+export interface LocalizedWall {
    x: number
    y: number
-   wall: TData
+   wall: WallSquare
+}
+
+export interface LocalizedGround {
+   x: number
+   y: number
+   ground: GroundSquare
 }
 
 export let generateLabyrinth = (prop: LoadProp) => {
@@ -15,8 +23,9 @@ export let generateLabyrinth = (prop: LoadProp) => {
 
    let twiceSize = { x: size.x * 2, y: size.y * 2 }
 
-   let oddWallList: LocalizedWall<WallSquare>[] = []
-   let evenWallList: LocalizedWall<WallSquare>[] = []
+   let groundList: LocalizedGround[] = []
+   let oddWallList: LocalizedWall[] = []
+   let evenWallList: LocalizedWall[] = []
 
    let grid = createArray2d<Square>(twiceSize, ({ y, x }) => {
       let isOddWall = () => (x + y) % 2 === 1
@@ -33,9 +42,11 @@ export let generateLabyrinth = (prop: LoadProp) => {
       }
 
       if (isGround()) {
-         return {
+         let me: GroundSquare = {
             type: 'ground',
          }
+         groundList.push({ x, y, ground: me })
+         return me
       }
 
       let me: WallSquare = {
@@ -55,6 +66,8 @@ export let generateLabyrinth = (prop: LoadProp) => {
       return me
    })
 
+   let wallGrid = grid as WallSquare[][]
+
    let shuffledOddWalllist = oddWallList
 
    shuffle(random, shuffledOddWalllist)
@@ -72,7 +85,7 @@ export let generateLabyrinth = (prop: LoadProp) => {
 
    let selectedWallList = kruskal({
       linkList: oddWallList,
-      getNodePair: (wall: LocalizedWall<WallSquare>) => {
+      getNodePair: (wall: LocalizedWall) => {
          // if (wall.y == 2 && wall.x == 1) debugger
 
          if (wall.x % 2 === 0) {
@@ -88,5 +101,38 @@ export let generateLabyrinth = (prop: LoadProp) => {
       wall.filled = 'empty'
    })
 
-   return { grid, oddWallList, evenWallList }
+   //////////////
+   // Dijkstra //
+   //////////////
+   let dijkstra = new Dijkstra()
+
+   let directionList: Pair[] = [
+      { y: -1, x: 0 },
+      { y: +1, x: 0 },
+      { y: 0, x: -1 },
+      { y: 0, x: +1 },
+   ]
+
+   let getNeigboorPairList = (pos: Pair) => {
+      return directionList
+         .filter((direction) => {
+            let { x, y } = pairAdd(pos, direction)
+            return wallGrid[y][x].filled === 'empty'
+         })
+         .map((direction) => pairAdd(pos, pairScale(direction, 2)))
+   }
+   let getLabel = ({ x, y }: Pair) => `${x},${y}`
+
+   groundList.forEach((localized) => {
+      let label = getLabel(localized)
+      let siblingObj: Record<string, number> = {}
+
+      getNeigboorPairList(localized).forEach((neighboor) => {
+         siblingObj[getLabel(neighboor)] = 1
+      })
+
+      dijkstra.addNode(label, siblingObj)
+   })
+
+   return { grid, wallGrid, oddWallList, evenWallList, dijkstra }
 }
