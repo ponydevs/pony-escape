@@ -1,10 +1,10 @@
 import { Observable } from 'rxjs'
 
 export interface PonyInput {
-   left: Observable<undefined>
-   right: Observable<undefined>
-   up: Observable<undefined>
-   down: Observable<undefined>
+   left: Observable<void>
+   right: Observable<void>
+   up: Observable<void>
+   down: Observable<void>
    removeAll: () => void
 }
 

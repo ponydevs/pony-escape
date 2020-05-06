@@ -96,7 +96,7 @@ export let createDisplay = (prop: PonyDisplayProp): PonyDisplay => {
       ctx.strokeText(text, x, y)
    }
 
-   let render = async (prop: PonyRenderProp): Promise<undefined> => {
+   let render = async (prop: PonyRenderProp): Promise<void> => {
       let gridSize = getGridSize(prop.grid)
       let squareSize = getSquareSize(gridSize)
 
