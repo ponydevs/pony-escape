@@ -28,11 +28,11 @@ export let core = (prop: LoadProp) => {
 
    let player: Player = {
       x: 1,
-      y: Math.floor(size.y / 4) * 2 + 1,
+      y: Math.ceil(size.y / 4) * 2 - 1,
    }
 
    wallGrid[player.y][0].filled = 'empty'
-   wallGrid[size.y * 2 - player.y][size.x * 2 - 2].filled = 'empty'
+   wallGrid[2 * size.y - 2 - player.y][size.x * 2 - 2].filled = 'empty'
 
    let score = 0
    let moveCount = 0
@@ -51,6 +51,9 @@ export let core = (prop: LoadProp) => {
       if (Math.abs(direction.x) + Math.abs(direction.y) !== 1) throw new Error()
 
       return () => {
+         let moveCounteIncrement = false
+         let needsRender = false
+
          player.x += direction.x
          player.y += direction.y
 
@@ -62,15 +65,20 @@ export let core = (prop: LoadProp) => {
             wallGrid[player.y][player.x].visibility = 'visible'
             player.x += direction.x
             player.y += direction.y
-            render()
-            moveCount += 1
+            needsRender = true
+            moveCounteIncrement = true
          } else {
             player.x -= direction.x
             player.y -= direction.y
          }
 
+         moveCount += +moveCounteIncrement
+
          if (moveCount === config.hide) {
             hideAllWalls()
+            needsRender = true
+         }
+         if (needsRender) {
             render()
          }
       }
