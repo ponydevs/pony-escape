@@ -14,11 +14,12 @@ export let main = async () => {
       seed: () => randomSeed(),
       smooze: () => false,
       easy: () => false,
+      justSmooze: ({ smooze }) => smooze(),
       hard: () => false,
       hide: ({ smooze }) => smooze(),
       hideDelay: ({ hide }) => (hide() ? 4 : -1),
       highlight: () => false,
-      smoozeDelay: ({ smooze }) => (smooze() ? 5 : -1),
+      smoozeDelay: ({ justSmooze }) => (justSmooze() ? 5 : -1),
       size: ({ easy, hard, hideDelay }) => {
          let difficulty = easy() ? 0 : hard() ? 2 : 1
          return (hideDelay() >= 0 ? [7, 8, 10] : [12, 15, 21])[difficulty]
