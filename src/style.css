@@ -27,3 +27,10 @@ html {
    font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
    letter-spacing: 1px;
 }
+
+canvas {
+   max-width: 100%;
+   max-height: calc(94vh - 55px);
+   width: auto;
+   margin: auto;
+}
