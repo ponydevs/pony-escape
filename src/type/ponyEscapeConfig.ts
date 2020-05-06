@@ -5,6 +5,7 @@ export interface PonyEscapeConfig {
    hard: boolean
    hide: boolean
    hideDelay: number
+   highlight: boolean
    maxCycleSize: number
    seed: string
    size: number

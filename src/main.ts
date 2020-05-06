@@ -10,11 +10,6 @@ import { randomSeed } from './util/randomSeed'
 import { getUrlParam } from './util/urlParam'
 
 export let main = async () => {
-   let { canvas } = init()
-   let asset = await getAsset()
-   let display = createDisplay({ asset, canvas })
-   let input = createInput()
-
    let config = getUrlParam<PonyEscapeConfig>(location, {
       seed: () => randomSeed(),
       smooze: () => false,
@@ -22,6 +17,7 @@ export let main = async () => {
       hard: () => false,
       hide: ({ smooze }) => smooze(),
       hideDelay: ({ hide }) => (hide() ? 4 : -1),
+      highlight: () => false,
       smoozeDelay: ({ smooze }) => (smooze() ? 5 : -1),
       size: ({ easy, hard, hideDelay }) => {
          let difficulty = easy() ? 0 : hard() ? 2 : 1
@@ -48,6 +44,11 @@ export let main = async () => {
    console.info(`?seed=${config.seed}`)
 
    let random = seedrandom(config.seed)
+
+   let { canvas } = init()
+   let asset = await getAsset()
+   let display = createDisplay({ asset, canvas, config })
+   let input = createInput()
 
    core({
       config,

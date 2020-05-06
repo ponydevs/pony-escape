@@ -1,12 +1,14 @@
-import { PonyDisplay, PonyRenderProp, Pair, WHPair } from '../type/ponyEscape'
-import { Asset } from './asset'
+import { Pair, PonyDisplay, PonyRenderProp } from '../type/ponyEscape'
+import { PonyEscapeConfig } from '../type/ponyEscapeConfig'
 import { getContext2d } from '../util/getContext2d'
-import { white, darkCoal, black, coal, albescent } from './color'
 import { scaleToFitIn } from '../util/scaleToFitIn'
+import { Asset } from './asset'
+import { albescent, black, coal, white } from './color'
 
 export interface PonyDisplayProp {
    asset: Asset
    canvas: HTMLCanvasElement
+   config: PonyEscapeConfig
 }
 
 export interface ScorePosition {
@@ -16,7 +18,7 @@ export interface ScorePosition {
 }
 
 export let createDisplay = (prop: PonyDisplayProp): PonyDisplay => {
-   let { asset, canvas } = prop
+   let { asset, canvas, config } = prop
    let ctx = getContext2d(canvas)
 
    let getGridSize = (grid: PonyRenderProp['grid']): Pair => {
@@ -76,8 +78,10 @@ export let createDisplay = (prop: PonyDisplayProp): PonyDisplay => {
 
       let dx = character.x * squareSize.x
       let dy = character.y * squareSize.y
-      ctx.strokeStyle = 'red'
-      ctx.strokeRect(dx, dy, squareSize.x, squareSize.y)
+      if (config.highlight) {
+         ctx.strokeStyle = 'red'
+         ctx.strokeRect(dx, dy, squareSize.x, squareSize.y)
+      }
       ctx.drawImage(image, dx + fit.x, dy + fit.y, fit.w, fit.h)
    }
 
@@ -98,6 +102,7 @@ export let createDisplay = (prop: PonyDisplayProp): PonyDisplay => {
          text = "You've been smoozed!"
       }
       ctx.fillText(text, x, y)
+      ctx.lineWidth = 2
       ctx.strokeText(text, x, y)
    }
 
