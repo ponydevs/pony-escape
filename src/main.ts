@@ -1,10 +1,13 @@
+import { default as seedrandom } from 'seedrandom'
+
 import { core } from './core/core'
 import { getAsset } from './display/asset'
 import { createDisplay } from './display/display'
 import { createInput } from './input/input'
 import { init } from './page/init'
-import { getUrlParam } from './util/urlParam'
 import { PonyEscapeConfig } from './ponyEscapeConfig'
+import { randomSeed } from './util/randomSeed'
+import { getUrlParam } from './util/urlParam'
 
 export let main = async () => {
    let { canvas } = init()
@@ -13,12 +16,13 @@ export let main = async () => {
    let input = createInput()
 
    let config = getUrlParam<PonyEscapeConfig>(location, {
+      seed: () => randomSeed(),
       smooze: () => false,
       easy: () => false,
       hard: () => false,
       size: ({ easy, hard, smooze }) => {
          let difficulty = easy() ? 0 : hard() ? 2 : 1
-         return (smooze() ? [6, 7, 9] : [12, 15, 21])[difficulty]
+         return (smooze() ? [7, 8, 10] : [12, 15, 21])[difficulty]
       },
       cycle: () => -1,
       maxCycleSize: ({ cycle, size }) => {
@@ -31,15 +35,18 @@ export let main = async () => {
       cycleRejectionFrequency: () => 0,
    })
 
-   core(
-      {
-         display,
-         input,
-         size: {
-            x: Math.round((config.size * 8) / 6),
-            y: config.size,
-         },
-      },
+   console.info(`?seed=${config.seed}`)
+
+   let random = seedrandom(config.seed)
+
+   core({
       config,
-   )
+      display,
+      input,
+      random,
+      size: {
+         x: Math.round((config.size * 8) / 6),
+         y: config.size,
+      },
+   })
 }

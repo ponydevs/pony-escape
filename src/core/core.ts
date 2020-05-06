@@ -1,25 +1,27 @@
+import { prng } from '../lib/seedrandom'
+import { PonyEscapeConfig } from '../ponyEscapeConfig'
 import {
+   Pair,
+   Player,
    PonyDisplay,
    PonyInput,
-   Square,
-   Player,
-   Pair,
    WallSquare,
 } from '../type/ponyEscape'
-import { generateLabyrinth } from './labyrinth/generateLabyrinth'
 import { w } from '../util/window'
-import { PonyEscapeConfig } from '../ponyEscapeConfig'
+import { generateLabyrinth } from './labyrinth/generateLabyrinth'
 
 export interface LoadProp {
+   config: PonyEscapeConfig
    display: PonyDisplay
    input: PonyInput
+   random: prng
    size: Pair
 }
 
-export let core = (prop: LoadProp, config: PonyEscapeConfig) => {
+export let core = (prop: LoadProp) => {
    let { display, input, size } = prop
 
-   let grid = generateLabyrinth(size, config)
+   let grid = generateLabyrinth(prop)
    let wallGrid = grid as WallSquare[][]
 
    w.grid = grid

@@ -1,8 +1,8 @@
 import { createArray2d } from '../../util/array2d'
-import { Square, Pair, WallSquare } from '../../type/ponyEscape'
+import { Square, WallSquare } from '../../type/ponyEscape'
 import { kruskal } from './kruskal'
 import { shuffle } from './shuffle'
-import { PonyEscapeConfig } from '../../ponyEscapeConfig'
+import { LoadProp } from '../core'
 
 export interface Localized<TData> {
    x: number
@@ -10,7 +10,9 @@ export interface Localized<TData> {
    data: TData
 }
 
-export let generateLabyrinth = (size: Pair, config: PonyEscapeConfig) => {
+export let generateLabyrinth = (prop: LoadProp) => {
+   let { config, size, random } = prop
+
    let twiceSize = { x: size.x * 2, y: size.y * 2 }
 
    let oddWallList: Localized<WallSquare>[] = []
@@ -48,15 +50,15 @@ export let generateLabyrinth = (size: Pair, config: PonyEscapeConfig) => {
       return me
    })
 
-   shuffle(oddWallList)
+   shuffle(random, oddWallList)
 
    let smallEnough
 
    if (config.maxCycleSize > 0) {
       smallEnough = (setSize: number) => {
          return (
-            setSize <= config.maxCycleSize &&
-            Math.random() >= config.cycleRejectionFrequency
+            random() >= config.cycleRejectionFrequency &&
+            setSize <= config.maxCycleSize
          )
       }
    }
