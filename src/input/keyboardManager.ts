@@ -38,7 +38,9 @@ export let createKeyboardManager = (
       let handler = onEventMap[key]
       if (handler !== undefined) {
          handler()
-         ev.preventDefault()
+         if (!(ev.altKey || ev.ctrlKey || ev.shiftKey)) {
+            ev.preventDefault()
+         }
       }
    }
 
