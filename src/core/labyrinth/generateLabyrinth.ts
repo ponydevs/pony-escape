@@ -1,11 +1,21 @@
 import { createArray2d } from '../../util/array2d'
 import { Square, Pair, WallSquare } from '../../type/ponyEscape'
+import { kruskal } from './kruskal'
+import { shuffle } from './shuffle'
+
+export interface Localized<TData> {
+   x: number
+   y: number
+   data: TData
+}
 
 export let generateLabyrinth = (size: Pair) => {
    let twiceSize = { x: size.x * 2, y: size.y * 2 }
 
+   let oddWallList: Localized<WallSquare>[] = []
+
    let grid = createArray2d<Square>(twiceSize, ({ y, x }) => {
-      let isWall = () => (x + y) % 2 === 1
+      let isOddWall = () => (x + y) % 2 === 1
       let isGround = () => x % 2 === 1 && y % 2 === 1
       let isMapBorder = () => {
          return x <= 0 || y <= 0 || x >= twiceSize.x - 2 || y >= twiceSize.y - 2
@@ -24,16 +34,36 @@ export let generateLabyrinth = (size: Pair) => {
          }
       }
 
-      let filled: WallSquare['filled'] = 'filled'
-      if (isWall() && Math.random() > 0.35 && !isMapBorder()) {
-         filled = 'empty'
-      }
-
-      return {
+      let me: WallSquare = {
          type: 'wall',
-         filled,
+         filled: 'filled',
          visibility: 'visible',
       }
+
+      if (isOddWall() && !isMapBorder()) {
+         oddWallList.push({ x, y, data: me })
+      }
+
+      return me
+   })
+
+   shuffle(oddWallList)
+
+   let selectedWallList = kruskal({
+      linkList: oddWallList,
+      getNodePair: (wall: Localized<WallSquare>) => {
+         // if (wall.y == 2 && wall.x == 1) debugger
+
+         if (wall.x % 2 === 0) {
+            return [grid[wall.y][wall.x - 1], grid[wall.y][wall.x + 1]]
+         } else if (wall.y % 2 === 0) {
+            return [grid[wall.y - 1][wall.x], grid[wall.y + 1][wall.x]]
+         } else throw new Error()
+      },
+   })
+
+   selectedWallList.forEach(({ data: wall }) => {
+      wall.filled = 'empty'
    })
 
    return grid

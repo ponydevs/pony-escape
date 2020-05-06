@@ -1,10 +1,8 @@
 # Pony Escape
 
-A simple like HTML5-canvas TypeScript side-scroller game.
+A labyrinth and memory game in HTML5-canvas and TypeScript.
 
-It's a clone of the ["T-Rex Chrome Dino Game"](https://chromedino.com/)
-that can be played in Chrome when internet isn't available or at the address
-chrome://dino/.
+## [Try it](https://ponyescape.now.sh)
 
 ## Contributing
 
