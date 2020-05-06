@@ -3,12 +3,14 @@ import * as joinable from './joinableSet'
 export interface KruskalProp<TNode, TLink> {
    linkList: TLink[]
    getNodePair: (link: TLink) => [TNode, TNode]
+   smallEnough?: (setSize: number) => boolean
 }
 
 export let kruskal = <TNode, TLink>(
    prop: KruskalProp<TNode, TLink>,
 ): TLink[] => {
    let setMap = new Map()
+   let { smallEnough = () => false } = prop
 
    let getSet = (node: TNode) => {
       let joinableSet = setMap.get(node)
@@ -29,11 +31,11 @@ export let kruskal = <TNode, TLink>(
       let sa = getSet(na)
       let sb = getSet(nb)
 
-      if (joinable.sameSet(sa, sb)) {
-         return
-      } else {
+      if (!joinable.sameSet(sa, sb)) {
          selectedLinkList.push(link)
          joinable.join(sa, sb)
+      } else if (smallEnough(joinable.size(sa))) {
+         selectedLinkList.push(link)
       }
    })
 

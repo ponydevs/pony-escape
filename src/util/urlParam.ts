@@ -1,9 +1,37 @@
-export let getUrlParam = <T>(location: Location, defaultConfig: T) => {
-   let config = {
-      ...defaultConfig,
-   }
+export type DefaultConfigObject<T> = {
+   [K in keyof T]: (param: Indirect<T>) => T[K]
+}
+
+export type Indirect<T> = {
+   [K in keyof T]: () => T[K]
+}
+
+export let getUrlParam = <T>(
+   location: Location,
+   defaultConfig: DefaultConfigObject<T>,
+) => {
+   let config: T = {} as any
 
    let pieceList = location.search.split('?').slice(1)
+
+   let stack = (
+      config: T,
+      defaultConfig: DefaultConfigObject<T>,
+   ): Indirect<T> => {
+      let stackedConfig = {} as Indirect<T>
+
+      Object.keys(defaultConfig).forEach((key) => {
+         if (key in config) {
+            stackedConfig[key] = () => config[key]
+         } else {
+            stackedConfig[key] = (conf = defaultConfig) => {
+               return defaultConfig[key](conf)
+            }
+         }
+      })
+
+      return stackedConfig
+   }
 
    pieceList.forEach((piece) => {
       let key: string
@@ -20,8 +48,12 @@ export let getUrlParam = <T>(location: Location, defaultConfig: T) => {
          value = true
       }
 
-      if (!(key in config) || typeof config[key] === typeof value) {
-         config[key] = value
+      config[key] = value
+   })
+
+   Object.keys(defaultConfig).forEach((key) => {
+      if (!(key in config)) {
+         config[key] = defaultConfig[key](stack(config, defaultConfig))
       }
    })
 

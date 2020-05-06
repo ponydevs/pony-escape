@@ -8,6 +8,7 @@ import {
 } from '../type/ponyEscape'
 import { generateLabyrinth } from './labyrinth/generateLabyrinth'
 import { w } from '../util/window'
+import { PonyEscapeConfig } from '../ponyEscapeConfig'
 
 export interface LoadProp {
    display: PonyDisplay
@@ -15,10 +16,10 @@ export interface LoadProp {
    size: Pair
 }
 
-export let core = (prop: LoadProp) => {
+export let core = (prop: LoadProp, config: PonyEscapeConfig) => {
    let { display, input, size } = prop
 
-   let grid = generateLabyrinth(size)
+   let grid = generateLabyrinth(size, config)
    let wallGrid = grid as WallSquare[][]
 
    w.grid = grid

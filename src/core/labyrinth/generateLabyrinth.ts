@@ -2,6 +2,7 @@ import { createArray2d } from '../../util/array2d'
 import { Square, Pair, WallSquare } from '../../type/ponyEscape'
 import { kruskal } from './kruskal'
 import { shuffle } from './shuffle'
+import { PonyEscapeConfig } from '../../ponyEscapeConfig'
 
 export interface Localized<TData> {
    x: number
@@ -9,7 +10,7 @@ export interface Localized<TData> {
    data: TData
 }
 
-export let generateLabyrinth = (size: Pair) => {
+export let generateLabyrinth = (size: Pair, config: PonyEscapeConfig) => {
    let twiceSize = { x: size.x * 2, y: size.y * 2 }
 
    let oddWallList: Localized<WallSquare>[] = []
@@ -49,6 +50,17 @@ export let generateLabyrinth = (size: Pair) => {
 
    shuffle(oddWallList)
 
+   let smallEnough
+
+   if (config.maxCycleSize > 0) {
+      smallEnough = (setSize: number) => {
+         return (
+            setSize <= config.maxCycleSize &&
+            Math.random() >= config.cycleRejectionFrequency
+         )
+      }
+   }
+
    let selectedWallList = kruskal({
       linkList: oddWallList,
       getNodePair: (wall: Localized<WallSquare>) => {
@@ -60,6 +72,7 @@ export let generateLabyrinth = (size: Pair) => {
             return [grid[wall.y - 1][wall.x], grid[wall.y + 1][wall.x]]
          } else throw new Error()
       },
+      smallEnough,
    })
 
    selectedWallList.forEach(({ data: wall }) => {
