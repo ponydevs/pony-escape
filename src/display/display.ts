@@ -98,6 +98,8 @@ export let createDisplay = (prop: PonyDisplayProp): PonyDisplay => {
       let text = `${score}`
       if (score === 'victory') {
          text = 'You escaped!'
+      } else if (score === 'defeat-plus') {
+         text = "You've escaped!"
       } else if (score === 'defeat') {
          text = "You've been smoozed!"
       }

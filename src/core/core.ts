@@ -102,8 +102,12 @@ export let core = (prop: LoadProp) => {
          player.y += direction.y
          moveCounteIncrement = true
       } else if (destinationReached) {
-         score = 'victory'
          screen = 'score'
+         if (score === 'defeat') {
+            score = 'defeat-plus'
+         } else {
+            score = 'victory'
+         }
       } else {
          if (wallGrid[player.y]?.[player.x]?.filled === 'filled') {
             makeWallVisible(player)

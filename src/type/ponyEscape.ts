@@ -21,7 +21,7 @@ export interface PonyRenderProp {
    player: Player
    monster: Monster | undefined
    screen: 'play' | 'score'
-   score: 'victory' | 'defeat' | '<score screen>'
+   score: 'victory' | 'defeat' | 'defeat-plus' | '<score screen>'
 }
 
 export type Square = ExteriorSquare | GroundSquare | WallSquare
