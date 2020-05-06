@@ -38,7 +38,7 @@ export let core = (prop: LoadProp) => {
    let moveCount = 0
 
    let hideAllWalls = () => {
-      if (!config.hide) return
+      if (config.hide < 0) return
       oddWallList.forEach(({ wall }) => {
          wall.visibility = 'invisible'
       })
@@ -69,7 +69,7 @@ export let core = (prop: LoadProp) => {
             player.y -= direction.y
          }
 
-         if (moveCount === 4) {
+         if (moveCount === config.hide) {
             hideAllWalls()
             render()
          }
