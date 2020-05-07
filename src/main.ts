@@ -7,9 +7,11 @@ import { createInput } from './input/input'
 import { init } from './page/init'
 import { PonyEscapeConfig } from './type/ponyEscapeConfig'
 import { randomSeed } from './util/randomSeed'
-import { getUrlParam } from './util/urlParam'
+import { getUrlParam, spacelessURL } from './util/urlParam'
 
 export let main = async () => {
+   spacelessURL(location)
+
    let config = getUrlParam<PonyEscapeConfig>(location, {
       seed: () => randomSeed(),
       smooze: () => false,

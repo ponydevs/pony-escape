@@ -6,6 +6,18 @@ export type Indirect<T> = {
    [K in keyof T]: () => T[K]
 }
 
+export let spacelessURL = (location: Location) => {
+   let spaceLessURL = location.href.replace(/ |%20/g, '')
+
+   if (spaceLessURL.includes(' ')) throw new Error()
+
+   if (location.href !== spaceLessURL) {
+      location.replace(spaceLessURL)
+   }
+
+   if (location.href.includes(' ')) throw new Error()
+}
+
 export let getUrlParam = <T>(
    location: Location,
    defaultConfig: DefaultConfigObject<T>,
