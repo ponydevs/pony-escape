@@ -91,7 +91,8 @@ export let createDisplay = (prop: PonyDisplayProp): PonyDisplay => {
    ) => {
       let { x, y, scale } = scorePos
 
-      ctx.font = `${32 * scale}px Impact`
+      let FONT_FAMILY = 'Anton, Impact, "Arial Bold"'
+      ctx.font = `${32 * scale}px ${FONT_FAMILY}`
       ctx.fillStyle = 'white'
       ctx.strokeStyle = 'black'
 
@@ -103,9 +104,9 @@ export let createDisplay = (prop: PonyDisplayProp): PonyDisplay => {
       } else if (score === 'defeat') {
          text = "You've been smoozed!"
       }
-      ctx.fillText(text, x, y)
-      ctx.lineWidth = 2
+      ctx.lineWidth = 5
       ctx.strokeText(text, x, y)
+      ctx.fillText(text, x, y)
    }
 
    let render = async (prop: PonyRenderProp): Promise<void> => {

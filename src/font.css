@@ -1,0 +1,5 @@
+@font-face {
+   font-family: "Anton";
+   src: url("../node_modules/typeface-anton/files/anton-latin-400.woff2") format("woff2"),
+        url("../node_modules/typeface-anton/files/anton-latin-400.woff") format("woff");
+ }

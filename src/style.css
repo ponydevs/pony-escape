@@ -24,12 +24,12 @@ h1 {
 }
 
 html {
-   font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
-   letter-spacing: 1px;
+   font-family: Anton, Impact, "Arial Bold";
 }
 
 body {
-   overscroll-behavior: none; /* https://developer.mozilla.org/en-US/docs/Web/CSS/overscroll-behavior */
+   /* https://developer.mozilla.org/en-US/docs/Web/CSS/overscroll-behavior */
+   overscroll-behavior: none;
 }
 
 canvas {
@@ -38,3 +38,5 @@ canvas {
    width: auto;
    margin: auto;
 }
+
+@import "./font.css"
