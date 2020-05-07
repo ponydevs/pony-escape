@@ -1,13 +1,16 @@
 import { Subject } from 'rxjs'
 
+// based on https://stackoverflow.com/a/23230280/9878263
+
 export let createSwipeManager = ({ element }) => {
    let xDown = 0
    let yDown = 0
 
    let getTouches = (evt) => {
       return (
-         evt.touches || evt.originalEvent.touches // browser API
-      ) // jQuery
+         // browser API ?? jQuery
+         evt.touches ?? evt.originalEvent.touches
+      )
    }
 
    let handleTouchStart = (evt) => {
