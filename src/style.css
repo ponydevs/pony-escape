@@ -26,6 +26,9 @@ h1 {
 html {
    font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
    letter-spacing: 1px;
+}
+
+body {
    overscroll-behavior: none; /* https://developer.mozilla.org/en-US/docs/Web/CSS/overscroll-behavior */
 }
 
