@@ -1,11 +1,6 @@
 import { Subject } from 'rxjs'
 
-// based on https://stackoverflow.com/a/23230280/9878263
-
-export let createSwipeManager = ({ element }) => {
-   let xDown = 0
-   let yDown = 0
-
+export let createFingerMoveManager = ({ element }) => {
    let getTouches = (evt) => {
       return (
          // browser API ?? jQuery
@@ -13,8 +8,11 @@ export let createSwipeManager = ({ element }) => {
       )
    }
 
+   let xDown = 0
+   let yDown = 0
+
    let handleTouchStart = (evt) => {
-      const firstTouch = getTouches(evt)[0]
+      let firstTouch = getTouches(evt)[0]
       xDown = firstTouch.clientX
       yDown = firstTouch.clientY
    }
@@ -24,29 +22,35 @@ export let createSwipeManager = ({ element }) => {
          return
       }
 
-      var xUp = evt.touches[0].clientX
-      var yUp = evt.touches[0].clientY
+      let currentX = evt.touches[0].clientX
+      let currentY = evt.touches[0].clientY
 
-      var xDiff = xDown - xUp
-      var yDiff = yDown - yUp
+      let dx = xDown - currentX
+      let dy = yDown - currentY
 
-      if (Math.abs(xDiff) > Math.abs(yDiff)) {
+      let dist = dx ** 2 + dy ** 2
+
+      if (dist < 80 ** 2) {
+         return
+      }
+
+      if (Math.abs(dx) > Math.abs(dy)) {
          /*most significant*/
-         if (xDiff > 0) {
+         if (dx > 0) {
             me.left.next()
          } else {
             me.right.next()
          }
       } else {
-         if (yDiff > 0) {
+         if (dy > 0) {
             me.up.next()
          } else {
             me.down.next()
          }
       }
-      /* reset values */
-      xDown = 0
-      yDown = 0
+
+      xDown = currentX
+      yDown = currentY
    }
 
    element.addEventListener('touchstart', handleTouchStart, false)

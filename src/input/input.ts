@@ -1,16 +1,16 @@
 import { Observable, Subject } from 'rxjs'
 import { PonyInput } from '../type/ponyEscape'
 import { createKeyboardManager } from './keyboardManager'
-import { createSwipeManager } from './swipeManager'
+import { createFingerMoveManager } from './fingerMoveManager'
 
 export let createInput = (): PonyInput => {
    let keyboard = createKeyboardManager({
-      element: document.body,
+      element: document.documentElement,
       evPropName: 'key',
    })
 
-   let swipeManager = createSwipeManager({
-      element: document.body,
+   let fingerMoveManager = createFingerMoveManager({
+      element: document.documentElement,
    })
 
    let makeObservable = (key: string, swipe: Subject) => {
@@ -26,13 +26,13 @@ export let createInput = (): PonyInput => {
    }
 
    return {
-      left: makeObservable('ArrowLeft', swipeManager.left),
-      right: makeObservable('ArrowRight', swipeManager.right),
-      up: makeObservable('ArrowUp', swipeManager.up),
-      down: makeObservable('ArrowDown', swipeManager.down),
+      left: makeObservable('ArrowLeft', fingerMoveManager.left),
+      right: makeObservable('ArrowRight', fingerMoveManager.right),
+      up: makeObservable('ArrowUp', fingerMoveManager.up),
+      down: makeObservable('ArrowDown', fingerMoveManager.down),
       removeAll: () => {
          keyboard.removeAll()
-         swipeManager.removeAll()
+         fingerMoveManager.removeAll()
       },
    }
 }
