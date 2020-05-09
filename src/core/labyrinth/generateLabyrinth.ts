@@ -24,6 +24,7 @@ export let generateLabyrinth = (prop: LoadProp) => {
    let twiceSize = { x: size.x * 2, y: size.y * 2 }
 
    let groundList: LocalizedGround[] = []
+   let wallList: LocalizedWall[] = []
    let oddWallList: LocalizedWall[] = []
    let evenWallList: LocalizedWall[] = []
 
@@ -56,10 +57,13 @@ export let generateLabyrinth = (prop: LoadProp) => {
       }
 
       if (!isMapBorder()) {
+         let localizedWall = { x, y, wall: me }
+         wallList.push(localizedWall)
+
          if (isOddWall()) {
-            oddWallList.push({ x, y, wall: me })
+            oddWallList.push(localizedWall)
          } else {
-            evenWallList.push({ x, y, wall: me })
+            evenWallList.push(localizedWall)
          }
       }
 
@@ -86,8 +90,6 @@ export let generateLabyrinth = (prop: LoadProp) => {
    let selectedWallList = kruskal({
       linkList: oddWallList,
       getNodePair: (wall: LocalizedWall) => {
-         // if (wall.y == 2 && wall.x == 1) debugger
-
          if (wall.x % 2 === 0) {
             return [grid[wall.y][wall.x - 1], grid[wall.y][wall.x + 1]]
          } else if (wall.y % 2 === 0) {
@@ -133,5 +135,5 @@ export let generateLabyrinth = (prop: LoadProp) => {
       dijkstra.addNode(label, siblingObj)
    })
 
-   return { grid, wallGrid, oddWallList, evenWallList, dijkstra }
+   return { grid, wallGrid, wallList, oddWallList, evenWallList, dijkstra }
 }

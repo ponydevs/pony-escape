@@ -12,6 +12,7 @@ import {
 import { w } from '../util/window'
 import { generateLabyrinth } from './labyrinth/generateLabyrinth'
 import { pairEqual, pairToString, pairFromString } from '../util/pair'
+import { Observable } from 'rxjs'
 
 export interface LoadProp {
    config: PonyEscapeConfig
@@ -19,10 +20,13 @@ export interface LoadProp {
    input: PonyInput
    random: prng
    size: Pair
+   revealLabyrinth$: Observable<Event>
+   setRevealButtonVisibility: (value: boolean) => void
 }
 
 export let core = (prop: LoadProp) => {
    let { config, display, input, size } = prop
+   let { revealLabyrinth$, setRevealButtonVisibility } = prop
 
    let {
       grid,
@@ -54,10 +58,7 @@ export let core = (prop: LoadProp) => {
    let moveCount = 0
 
    let hideAllWalls = () => {
-      oddWallList.forEach(({ wall }) => {
-         wall.visibility = 'invisible'
-      })
-      evenWallList.forEach(({ wall }) => {
+      oddWallList.concat(evenWallList).forEach(({ wall }) => {
          wall.visibility = 'invisible'
       })
    }
@@ -74,6 +75,11 @@ export let core = (prop: LoadProp) => {
          wall.visibility = 'visible'
       })
    }
+
+   revealLabyrinth$.subscribe(() => {
+      oddWallList.forEach(makeWallVisible)
+      render()
+   })
 
    /**
     * move

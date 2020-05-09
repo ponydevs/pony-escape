@@ -10,21 +10,22 @@
    box-sizing: border-box;
    font-size: 100%;
    font-weight: normal;
-   height: auto;
+   /* height: auto; */
+   /* UI5 select components have issues with `height: auto` */
    list-style: none;
    margin: 0;
    max-width: 100%;
    padding: 0;
-   padding: 0;
    text-align: left;
 }
 
-h1 {
-   font-size: 260%;
+html {
+   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-html {
+h1 {
    font-family: Anton, Impact, "Arial Bold";
+   font-size: 260%;
 }
 
 body {
@@ -37,6 +38,15 @@ canvas {
    max-height: calc(94vh - 55px);
    width: auto;
    margin: auto;
+}
+
+.inline {
+   display: inline
+}
+
+.buttonSet > * {
+   margin-left: 1em;
+   margin-bottom: 10px;
 }
 
 @import "./font.css"
