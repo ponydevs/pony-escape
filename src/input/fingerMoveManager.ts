@@ -4,7 +4,7 @@ export let createFingerMoveManager = ({ element }) => {
    let getTouches = (evt) => {
       return (
          // browser API ?? jQuery
-         evt.touches ?? evt.originalEvent.touches
+         evt.touches?.[0] ?? evt.originalEvent?.touches?.[0] ?? evt
       )
    }
 
@@ -12,9 +12,10 @@ export let createFingerMoveManager = ({ element }) => {
    let yDown = 0
 
    let handleTouchStart = (evt) => {
-      let firstTouch = getTouches(evt)[0]
-      xDown = firstTouch.clientX
-      yDown = firstTouch.clientY
+      let touches = getTouches(evt)
+
+      xDown = touches.clientX
+      yDown = touches.clientY
    }
 
    let handleTouchMove = (evt) => {
@@ -22,8 +23,10 @@ export let createFingerMoveManager = ({ element }) => {
          return
       }
 
-      let currentX = evt.touches[0].clientX
-      let currentY = evt.touches[0].clientY
+      let touches = getTouches(evt)
+
+      let currentX = touches.clientX
+      let currentY = touches.clientY
 
       let dx = xDown - currentX
       let dy = yDown - currentY
@@ -53,12 +56,34 @@ export let createFingerMoveManager = ({ element }) => {
       yDown = currentY
    }
 
+   let mouseIsDown = false
+   let handleMouseDown = (ev: Event) => {
+      mouseIsDown = true
+      handleTouchStart(ev)
+   }
+
+   let handleMouseMove = (ev) => {
+      if (mouseIsDown) {
+         handleTouchMove(ev)
+      }
+   }
+
+   let handleMouseUp = () => {
+      mouseIsDown = false
+   }
+
    element.addEventListener('touchstart', handleTouchStart, false)
    element.addEventListener('touchmove', handleTouchMove, false)
+   element.addEventListener('mousedown', handleMouseDown, false)
+   element.addEventListener('mousemove', handleMouseMove, false)
+   element.addEventListener('mouseup', handleMouseUp, false)
 
    let removeAll = () => {
       element.removeEventListener('touchstart', handleTouchStart, false)
       element.removeEventListener('touchmove', handleTouchMove, false)
+      element.removeEventListener('mousedown', handleMouseDown, false)
+      element.removeEventListener('mousemove', handleMouseMove, false)
+      element.removeEventListener('mouseup', handleMouseUp, false)
    }
 
    let me = {
