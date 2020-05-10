@@ -3,6 +3,7 @@ import { randomSeed } from '../util/randomSeed'
 import { getUrlParam } from '../util/urlParam'
 import { ButtonSet } from './buttonSet'
 import { h } from './lib/hyper'
+import { githubCornerHTML } from '../lib/githubCorner'
 
 interface InitProp {
    document: Document
@@ -53,9 +54,14 @@ export let init = (prop: InitProp) => {
    let { document, location } = prop
    let config = getConfig(prop)
    let buttonSet = ButtonSet({ location, seed: config.seed })
+
    let canvas = h('canvas')
    canvas.width = 800
    canvas.height = 600
+
+   let corner = h('i', {
+      innerHTML: githubCornerHTML('https://github.com/ponydevs/pony-escape'),
+   })
 
    document.body.append(
       h('h1', {
@@ -64,6 +70,7 @@ export let init = (prop: InitProp) => {
       }),
       buttonSet.elem,
       h('div', {}, [canvas]),
+      corner,
    )
 
    return {
