@@ -61,6 +61,7 @@ export let core = (prop: LoadProp) => {
       oddWallList.concat(evenWallList).forEach(({ wall }) => {
          wall.visibility = 'invisible'
       })
+      setRevealButtonVisibility(true)
    }
 
    let makeWallVisible = (pos: Pair) => {
@@ -78,6 +79,7 @@ export let core = (prop: LoadProp) => {
 
    revealLabyrinth$.subscribe(() => {
       oddWallList.forEach(makeWallVisible)
+      setRevealButtonVisibility(false)
       render()
    })
 

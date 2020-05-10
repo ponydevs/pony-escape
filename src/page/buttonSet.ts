@@ -142,12 +142,7 @@ export let ButtonSet = (prop: ButtonSetProp) => {
       {
          className: 'buttonSet',
       },
-      [
-         gameModeDropDown.elem,
-         restartGameButton.elem,
-         newGameButton.elem,
-         revealLabyrinthButton.elem,
-      ],
+      [gameModeDropDown.elem, newGameButton.elem, restartGameButton.elem],
    )
 
    return {
@@ -162,6 +157,7 @@ export let ButtonSet = (prop: ButtonSetProp) => {
          } else {
             revealLabyrinthButton.elem.remove()
          }
+         revealButtonVisibility = visibility
       },
    }
 }
