@@ -1,24 +1,12 @@
 {
    "name": "pony-run",
-   "description": "A simple dino-like HTML5-canvas TS game with ponies",
+   "description": "A labyrinth and memory game with Rarity the mare, and the Smooze",
    "repository": "git@github.com:ponydevs/ponyrun.git",
    "license": "ISC",
    "scripts": {
-      "build": "parcel build src/page.html -d public -o index.html"
-   },
-   "ava": {
-      "extensions": [
-         "ts"
-      ],
-      "require": [
-         "ts-node/register"
-      ],
-      "files": [
-         "src/**/*.test.ts"
-      ]
+      "build": "parcel build src/labyrinth.html --public-url labyrinth.d"
    },
    "devDependencies": {
-      "@types/hammerjs": "^2.0.36",
       "@types/node": "^13.9.1",
       "@types/seedrandom": "^2.4.28",
       "ava": "^3.8.1",
